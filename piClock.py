@@ -11,7 +11,7 @@ class Clock():
         self.i2c = busio.I2C(board.SCL, board.SDA)
         self.display = adafruit_is31fl3731.Matrix(self.i2c)
         self.led_level = 255
-        self.clear = lambda: os.system('clear') 
+        #self.clear = lambda: os.system('clear') 
 
         self.pos_dict = {}
         counter = 0
@@ -33,17 +33,17 @@ class Clock():
 
     #get the time and drive the led
     def tick(self):
-        self.clear()
+        #elf.clear()
         now = datetime.datetime.now()
         led_a_level = int(round(self.led_level * (now.second/60),0))
         led_b_level = self.led_level - led_a_level
-        if now.hour > 12:
-            offset = 48 #conver 24h to 12
+        if now.hour >= 12:
+            offset = 48 #convert 24h to 12
         else:
             offset = 60
         hour = now.hour + offset #offset for the led matrix, don't want to overlap minute's LEDs (minute LED 0-59, Hour LED 60-71).
         minute = now.minute
-        print(now.hour,now.minute, now.second," ",hour,minute)
+        #print(now.hour,now.minute, now.second," ",hour,minute) #for debug
         
         try:
             self.light(self.previous_hour_led,0) #turn off previous LED
@@ -58,9 +58,9 @@ class Clock():
                 self.light(0,led_a_level) #Next minute LED
             self.previous_min_led = minute
             
-            msg = "x:"+str(self.pos_dict[hour]["x"])+" y:"+str(self.pos_dict[hour]["y"])+"\n"
+            """ msg = "x:"+str(self.pos_dict[hour]["x"])+" y:"+str(self.pos_dict[hour]["y"])+"\n"
             msg += "x:"+str(self.pos_dict[minute]["x"])+" y:"+str(self.pos_dict[minute]["y"])+" lvl:"+str(led_b_level)+"\n"
-            print(msg)
+            print(msg) #debug """
         except Exception as err:
             logger.exception(err)
     
