@@ -65,7 +65,6 @@ class Clock():
             led_level = 255 #day mode
         if led_level < 25:
             led_level = 25 #night mode
-        print(led_level)
         now = datetime.datetime.now()
         led_a_level = int(round(led_level * (now.second/60),0))
         led_b_level = led_level - led_a_level
@@ -89,8 +88,12 @@ class Clock():
                 self.light(0,led_a_level) #Next minute LED
             self.previous_min_led = minute
             
+        except KeyboardInterrupt:
+            self.display.fill(0)
+        
         except Exception as err:
             logger.exception(err)
+            
     
     def light(self, pos, level):
         self.display.pixel(self.pos_dict[pos]["x"],self.pos_dict[pos]["y"],level) #clock side A
